@@ -1,0 +1,519 @@
+<%- include('../layout/userHeader')%>
+  <!-- {{!-- Razorpay --}} -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <main id="main" role="main">
+    <section id="checkout-container">
+      <div class="container">
+        <form class="needs-validation" id="checkoutForm" method="post">
+          <div class="row py-5">
+            <div class="col-md-4 order-md-2 mb-4" id="couponDiv">
+              <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">PRICE DETAILS</span>
+              </h4>
+              <ul class="list-group mb-3">
+                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                  <div>
+                    <h6 class="my-0">Total Price</h6>
+                  </div>
+                  <span class="text-muted">Rs.<%=total%></span>
+                </li>
+                <span id="cartList" hidden>{{cartList}}</span>
+                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                  <div>
+                    <h6 class="my-0">Delivery</h6>
+                    <small class="text-muted">Free Delivery only On Flag-ship Phones</small>
+                  </div>
+                  <span class="text-muted">Rs.0</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between bg-light">
+                  <div class="text-success">
+                    <h6 class="my-0">Coupon</h6>
+                    <small id="couponName"></small>
+                  </div>
+                  <span class="text-success" id="couponPrice">Rs.0</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Amount Payable (INR)</span>
+                  <strong id="strong">Rs.<%=total%></strong>
+                  <input type="text" id="total" name="total" value="<%=total%>" hidden>
+                </li>
+              </ul>
+              <form class="card p-2">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="couponCode" placeholder="Promo code">
+                  <div class="input-group-append">
+                    <span onclick="submitCoupon()" class="btn btn-secondary">Redeem</span>
+                  </div>
+                </div>
+                <span id="invalidCoupon" class="text-danger"></span>
+              </form>
+            </div>
+            <div class="col-md-8 order-md-1">
+              <h4 class="mb-3">Billing address</h4>
+
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                  <div class="col-md-12">
+                    <% if(userDetails && userDetails.address) { %>
+                      <% userDetails.address.forEach(function(addresses) { %>
+                        <div class="d-flex mb-3">
+                          <input type="radio" value="<%= addresses.id%>" name="address" class=" mr-3">
+                          <div class="border p-2" style="color: rgb(80, 80, 80);">
+                            <b>
+                              <%= addresses.name%>
+                            </b>, <br>
+                            <%= addresses.address%>, <br>
+                              <%= addresses.city%>, <%= addresses.state%>, <br>
+                                  Zipcode: <%= addresses.zipcode%>, Mobile: <%= addresses.mobile%>
+                          </div>
+                          <div class="ml-auto pr-3 d-flex">
+                            <div>
+                              <a class="btn btn-primary pl-3 pr-3 text-light"
+                                style="letter-spacing: 0.1rem;cursor: pointer;" data-toggle="modal"
+                                data-target="#edit<%= addresses.id%>">Edit</a>
+                            </div>
+                            <div class="ml-3 mt-1" style="cursor: pointer;">
+                              <a data-toggle="modal" data-target="#deleteAddr<%= addresses.id%>">
+                                <div class="border border-warning text-center" style="width: fit-content;">
+                                  <span class="ion-ios-close p-3"></span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                  </div>
+                  <% }) %>
+                    <% }else{ %>
+                      No address found Please add address
+                      <% } %>
+                </div>
+              </div>
+            </div>
+
+            <hr class="mb-4">
+            <div class="custom-control">
+              <a class="text-primary" data-toggle="modal" data-target=".bd-example-modal-lg"
+                style="cursor: pointer;">Add a new Address</a>
+            </div>
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" checked disabled id="same-address">
+              <label class="custom-control-label" for="same-address">Shipping address is the same as my billing
+                address</label>
+            </div>
+            <hr class="mb-4">
+            <h4 class="mb-3">Payment</h4>
+            <div class="d-block my-3">
+              <div class="custom-control custom-radio">
+                <input id="COD" name="paymentMethod" onclick="validateSubmit()" type="radio"
+                  class="custom-control-input" value="COD" required>
+                <label class="custom-control-label" for="COD">Cash on Delivery</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input id="razorpay" name="paymentMethod" onclick="validateSubmit()" type="radio"
+                  class="custom-control-input" value="onlineRazorpay" required>
+                <label class="custom-control-label" for="razorpay"><img
+                    src="data:image/png;base64,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"
+                    style="height: 20px;width: 21px;" alt="">Razor Pay</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input id="paypal" name="paymentMethod" onclick="validateSubmit()" type="radio"
+                  class="custom-control-input" value="onlinePaypal" required>
+                <label class="custom-control-label" for="paypal"><img
+                    src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-mark-color.svg"
+                    style="height: 20px;width: 21px;" alt="">PayPal</label>
+              </div>
+            </div>
+            <hr class="mb-4">
+
+            <button id="checkoutBtn" class="btn btn-primary btn-lg btn-block" disabled type="submit">Continue to
+              checkout</button>
+        </form>
+      </div>
+      </div>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- add-new-address MODAL  -->
+  <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="p-4">
+          <form action="/addAddressPost" method="post">
+
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputEmail4">Name</label>
+                <input type="name" class="form-control" name="name" id="inputEmail4" placeholder="Name">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputPassword4">Mobile Number</label>
+                <input type="text" maxlength="10" class="form-control" name="mobile" id="inputPassword4"
+                  placeholder="Mobile Number">
+              </div>
+            </div>
+            <label for="">Address</label>
+            <div class="form-group">
+              <textarea name="address" class="form-control" id="address" cols="50"
+                placeholder="Address (Area and Street)" rows="5"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputCity">City</label>
+                <input type="text" name="city" class="form-control" placeholder="city" id="inputCity">
+              </div>
+              <div class="form-group col-md-4">
+                <label for="inputState">State</label>
+                <input type="text" class="form-control" placeholder="State" name="state">
+                <!-- <select id="inputState" class="form-control">
+                    <option selected>Choose...</option>
+                    <option>...</option>
+                  </select> -->
+              </div>
+              <div class="form-group col-md-2">
+                <label for="inputZip">Zip Code</label>
+                <input type="text" class="form-control" name="zipcode" placeholder="Zip Code" id="inputZip">
+              </div>
+            </div>
+            <label for="type">Address Type</label>
+            <div class="form-row text-dark">
+              <input type="radio" class="mr-1" name="type" value="home">Home &nbsp;&nbsp;&nbsp;
+              <input type="radio" class="mr-1" name="type" value="work">Work
+            </div>
+            <!-- <div class="form-group">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="gridCheck">
+                  <label class="form-check-label" for="gridCheck">
+                    Check me out
+                  </label>
+                </div>
+              </div> -->
+            <div class="text-center mt-2">
+              <button type="submit" id="refresh-btn" class="btn btn-primary">SUBMIT</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if(userDetails && userDetails.address) { %>
+
+    <!--  Edit Address  -->
+    <% userDetails.address.forEach(function(addresses) { %>
+      <div class="modal fade" id="edit<%= addresses.id%>" tabindex="-1" role="dialog"
+        aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="p-4">
+              <form action="/editAddressPost/<%= addresses.id%>" method="post">
+
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="inputEmail4">Name</label>
+                    <input type="name" class="form-control" name="name" id="inputEmail4" value="<%= addresses.name%>"
+                      placeholder="Name">
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="inputPassword4">Mobile Number</label>
+                    <input type="text" maxlength="10" class="form-control" name="mobile" value="<%= addresses.mobile%>"
+                      id="inputPassword4" placeholder="Mobile Number">
+                  </div>
+                </div>
+                <label for="">Address</label>
+                <div class="form-group">
+                  <input name="address" class="form-control" value="<%= addresses.address%>" id="address" cols="50"
+                    placeholder="Address (Area and Street)" rows="5">
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="inputCity">City</label>
+                    <input type="text" name="city" class="form-control" value="<%= addresses.city%>" placeholder="city"
+                      id="inputCity">
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="inputState">State</label>
+                    <input type="text" class="form-control" value="<%= addresses.state%>" placeholder="State"
+                      name="state">
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label for="inputZip">Zip Code</label>
+                    <input type="text" class="form-control" value="<%= addresses.zipcode%>" name="zipcode"
+                      placeholder="Zip Code" id="inputZip">
+                  </div>
+                </div>
+                <label for="type">Address Type</label>
+                <div class="form-row text-dark">
+                  <input type="radio" class="mr-1" name="type" value="home">Home &nbsp;&nbsp;&nbsp;
+                  <input type="radio" class="mr-1" name="type" value="work">Work
+                </div>
+                <div class="text-center mt-2">
+                  <button type="submit" class="btn btn-primary">SUBMIT</button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+
+        <!-- {{!-- modal deleteAddress --}} -->
+        <% userDetails.address.forEach(function(addresses) { %>
+          <div class="modal fade" id="deleteAddr<%= addresses.id%>" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Do you want to delete this address of <%= addresses.name%>?
+                </div>
+                <div class="modal-footer">
+                  <a href=""><button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button></a>
+                  <a href="/deleteAddress/<%= addresses.id%>"><button type="button"
+                      class="btn btn-primary">confirm</button></a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+            <% } %>
+
+              <!-- checkout modal -->
+              <div id="demoModal" class="modal fade">
+                <div class="modal-dialog modal-confirm">
+                  <div class="modal-content">
+                    <div class="modal-header justify-content-center">
+                      <div class="icon-box">
+                        <i class="material-icons">&#xE876;</i>
+                      </div>
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body text-center">
+                      <h4>Great!</h4>
+                      <p>Your order has been created successfully.</p>
+                      <a href="/order" class="btn btn-success" data-dismiss="modal"><span>Orders</span></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- {{!-- modal for success (online payment)  --}} -->
+              <div class="modal fade auto-off" id="demoModal2" tabindex="-1" role="dialog" aria-labelledby="demoModal"
+                aria-hidden="true">
+                <div class="modal-dialog animated zoomInDown modal-dialog-centered" role="document">
+                  <div class="modal-content">
+
+                    <div class="container-fluid">
+                      <!-- {{!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> --}} -->
+
+                      <div class="row py-5">
+                        <div class="col-md-12 m-h-20 bg-img rounded-left text-center">
+                          <img style="max-width: 40%;"
+                            src="https://lirp.cdn-website.com/bbca9e7c/dms3rep/multi/opt/green-tick-icon-0-1000x1000-640w.png"
+                            alt="">
+                        </div>
+                        <div class="col-md-12 text-center pt-4 px-sm-5 ">
+
+                          <h2>Order Placed Successfuly</h2>
+                          <p class="text-muted"></p>
+                          <a href="/order"><button class="btn btn-primary w-50">Go to Orders</button></a>
+
+                          <!-- {{!-- timer --}}
+                        {{!-- <div class="text-center mt-4 text-dark">
+                            <p id="timer">redirected to order in 10 seconds</p>
+                        </div> --}} -->
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <script>
+                // <!-- {{!-- validation-script for checkout --}} -->
+                function validateRadioAddr() {
+                  var radioButtons = document.getElementsByName('address');
+                  var isSelected = false;
+
+                  for (var i = 0; i < radioButtons.length; i++) {
+                    if (radioButtons[i].checked) {
+                      isSelected = true;
+                      break;
+                    }
+                  }
+
+                  if (!isSelected) {
+                    alert('Please select an address option.');
+                    return false;
+                  }
+
+                  return true;
+                }
+                function validateRadioCOD() {
+                  var radioButtons = document.getElementsByName('paymentMethod');
+                  var isSelected = false;
+
+                  for (var i = 0; i < radioButtons.length; i++) {
+                    if (radioButtons[i].checked) {
+                      isSelected = true;
+                      break;
+                    }
+                  }
+
+                  if (!isSelected) {
+                    alert('Please select an address option.');
+                    return false;
+                  }
+
+                  return true;
+                }
+
+                function validateSubmit() {
+                  if (validateRadioAddr() && validateRadioCOD()) {
+                    const isCOD = document.getElementsByName('paymentMethod');
+                    for (var i = 0; i < isCOD.length; i++) {
+                      if (isCOD[i].checked) {
+                        const value = isCOD[i].value;
+                        if (value === "COD" || value === "onlineRazorpay" || value === "onlinePaypal") {
+                          document.getElementById('checkoutBtn').removeAttribute('disabled');
+                        }
+                      }
+                    }
+                  }
+                }
+
+
+                // <!-- coupon -->
+
+                let totalCost = parseInt(document.getElementsByName('total')[0].value);
+                let coupon;
+
+                function submitCoupon() {
+                  const code = document.getElementById('couponCode').value;
+                  coupon = document.getElementById('couponCode').value;
+
+                  axios.post('/couponApply', { 'couponCode': code })
+                    .then((response) => {
+                      if (response.data.status == "success") {
+                        const coupon = response.data.coupon;
+                        if (coupon.status == "DEACTIVATED" || coupon.status == "EXPIRED") {
+                          document.getElementById('invalidCoupon').innerHTML = "Coupon Deactivaed or Expired";
+                        } else if (totalCost <= 1000) {
+                          document.getElementById('invalidCoupon').innerHTML = "purchase for atleast Rs.1000 to apply coupon";
+                        } else {
+                          const couponAmt = parseInt(coupon.discount);
+                          totalCost = totalCost - couponAmt;
+                          document.getElementsByName('total')[0].value = totalCost;
+                          document.getElementById('strong').innerHTML = `Rs.${totalCost}`;
+                          document.getElementById('invalidCoupon').innerHTML = "";
+                          document.getElementById('couponName').innerHTML = coupon.code;
+                          document.getElementById('couponPrice').innerHTML = `Rs.${couponAmt}`;
+                          document.getElementById('couponCode').value = code;
+                        }
+                      } else {
+                        document.getElementById('invalidCoupon').innerHTML = response.data.status;
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    })
+                }
+
+
+                // <!-- form submit -->
+
+                $('#checkoutForm').on('submit', function (event) {
+                  // prevent default form submission behavior
+                  event.preventDefault();
+
+                  // collect form data
+                  var formData = $(this).serialize();
+
+                  // add coupon code to form data
+                  formData += `&coupon=${coupon}`;
+                  console.log(formData);
+                  axios({
+                    method: 'POST',
+                    url: '/orderSubmited',
+                    data: formData
+                  })
+                    .then((response) => {
+                      if (response.data.paymentMethod === 'COD') {
+                        const demoModal = new bootstrap.Modal(document.getElementById('demoModal'));
+                        demoModal.show();
+                        setTimeout(() => {
+                          location.href = '/order';
+                        }, 2000);
+                      } else if (response.data.paymentMethod === 'onlineRazorpay') {
+                        razorpayPayment(response.data.response, response.data.userDetails);
+                      } else if (response.data.status === 'success') {
+                        window.location.href = response.data.approval_link;
+                      }
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                });
+
+                function razorpayPayment(order, userDetails) {
+                  const options = {
+                    key: 'rzp_test_nj1ApQAeQAcYhL',
+                    amount: order.amount,
+                    currency: "INR",
+                    name: 'Flag-Ship Phones',
+                    description: 'Test Transaction',
+                    image: 'https://res.cloudinary.com/dcc8meh8i/image/upload/v1679116198/logo3_gtrtz9.jpg',
+                    order_id: order.id,
+                    handler: function (res) {
+                      verifyPayment(res, order);
+                    },
+                    prefill: {
+                      name: userDetails.name,
+                      email: userDetails.email,
+                      contact: userDetails.mobile
+                    },
+                    notes: {
+                      address: 'Razorpay Corporate Office'
+                    },
+                    theme: {
+                      color: '#3399cc'
+                    }
+                  };
+                  var rzp1 = new Razorpay(options);
+                  rzp1.open();
+                }
+
+                function verifyPayment(response, order) {
+                  axios({
+                    method: 'POST',
+                    url: '/verifyPayment',
+                    data: {
+                      response: response,
+                      order: order
+                    }
+                  })
+                    .then((response) => {
+                      if (response.data.status) {
+                        const demoModal2 = new bootstrap.Modal(document.getElementById('demoModal2'));
+                        demoModal2.show();
+                      }
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                }
+              </script>
+
+
+              <%- include('../layout/userFooter')%>

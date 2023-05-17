@@ -1,0 +1,292 @@
+<%- include('../layout/adminHeader') %>
+  <%- include('../partials/adminNavBar')%>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+    <style>
+      .table-striped {
+        background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.2) 75%, rgba(255, 255, 255, 0.2)), linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.2) 75%, rgba(255, 255, 255, 0.2));
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+      }
+    </style>
+    <!-- Add this div to your HTML code -->
+    <div id="loader-wrapper">
+      <div id="loader"></div>
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+    </div>
+    <script>
+      setTimeout(() => {
+        document.getElementById('loader-wrapper').style.display = 'none'
+      }, 800);
+    </script>
+
+    <div class="row tm-content-row m-2">
+      <div class="col-sm-12 col-md-12 col-lg-9 col-xl-9 tm-block-col text-white">
+        <!-- <div class="tm-bg-primary-dark tm-block tm-block-products"> -->
+        <!-- <form action="/admin/searchProduct" method="post">
+            <div class="mt-1 input-group">
+              <div class="form-outline">
+                <input type="search" name="name" id="form1" class="form-control" />
+              </div>
+              <button type="submit" class="btn btn-primary">Search</button>
+              <a class="ml-5 btn btn-primary" href="/admin/product">Show All Products</a>
+            </div>
+            </form> -->
+        <!-- <div class="tm-product-table-container"> -->
+        <table id="myTable" class="table table-hover tm-table-small tm-product-table">
+          <thead>
+            <tr>
+              <th scope="col">PRODUCT NAME</th>
+              <th scope="col">DESCRIPTION</th>
+              <th scope="col">CATEGORY</th>
+              <th scope="col">STOCK</th>
+              <th scope="col">PRICE</th>
+              <th scope="col">IMAGE</th>
+              <th scope="col">LISTED</th>
+              <th scope="col">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (productData.length!=0) { %>
+              <% productData.forEach(function(productData) { %>
+                <% if(productData.listed==false) { %>
+                  <tr>
+                    <td>
+                      <%= productData.name %>
+                    </td>
+                    <td>
+                      <%= productData.description %>
+                    </td>
+                    <td>
+                      <%= productData.category%>
+                    </td>
+                    <td class="text-danger ">
+                      <%= productData.stock %>
+                    </td>
+                    <td>
+                      <%= productData.price %>
+                    </td>
+                    <td><img src="<%= productData.images[0] %>" style="width: 50px;"></td>
+                    <td class="text-danger ">
+                      <%= productData.listed%>
+                    </td>
+                    <td>
+                      <a href="/admin/editProductPage/<%= productData._id %>" class="tm-product-delete-link">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                      <a data-toggle="modal" data-target="#deleteProduct<%= productData._id %>"
+                        class="tm-product-delete-link">
+                        <i class="far fa-trash-alt tm-product-delete-icon"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  <% }else{ %>
+                    <tr>
+                      <td>
+                        <%= productData.name %>
+                      </td>
+                      <td>
+                        <%= productData.description %>
+                      </td>
+                      <td>
+                        <%= productData.category%>
+                      </td>
+                      <td>
+                        <%= productData.stock %>
+                      </td>
+                      <td>
+                        <%= productData.price %>
+                      </td>
+                      <td><img src="<%= productData.images[0] %>" style="width: 50px;"></td>
+                      <td>
+                        <%= productData.listed%>
+                      </td>
+                      <td>
+                        <a href="/admin/editProductPage/<%= productData._id %>" class="tm-product-delete-link">
+                          <i class="fas fa-edit"></i>
+                        </a>
+                        <a data-toggle="modal" data-target="#deleteProduct<%= productData._id %>"
+                          class="tm-product-delete-link">
+                          <i class="far fa-trash-alt tm-product-delete-icon"></i>
+                        </a>
+                      </td>
+                    </tr>
+                    <% } %>
+                      <% }) %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="12" class="text-center h1">No product found</td>
+                          </tr>
+                          <% } %>
+          </tbody>
+        </table>
+        <!-- table container -->
+        <a href="/admin/getProdCategoryToAddProduct" class="btn btn-primary btn-block text-uppercase mb-3">Add new
+          product</a>
+      </div>
+      <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3 tm-block-col">
+        <div class="tm-bg-primary-dark tm-block tm-block-product-categories">
+          <h2 class="tm-block-title">Product Categories</h2>
+          <div class="tm-product-table-container">
+            <table class="table tm-table-small tm-product-table">
+              <tbody>
+                <% category.forEach(function(category) { %>
+                  <tr>
+                    <% if (category.listed==false) { %>
+                      <td class="tm-product-name text-danger">
+                        <%= category.category %>
+                      </td>
+                      <td class="text-center">
+                        <a data-toggle="modal" data-target="#listCategory<%= category._id %>"
+                          class="tm-product-delete-link">
+                          <i class="fas fa-check"></i>
+                        </a>
+                      </td>
+                      <% }else{ %>
+                        <td class="tm-product-name">
+                          <%= category.category %>
+                        </td>
+                        <td class="text-center">
+                          <a data-toggle="modal" data-target="#deleteCategory<%= category._id %>"
+                            class="tm-product-delete-link">
+                            <i class="far fa-trash-alt tm-product-delete-icon"></i>
+                          </a>
+                        </td>
+                        <% } %>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <!-- table container -->
+          <button data-toggle="modal" data-target="#add" class="btn btn-primary btn-block text-uppercase mb-3">
+            Add new category
+          </button></a>
+          <% if(locals.errMsg) { %>
+            <div id="msg" class="alert alert-danger ml-4 "><%- locals.errMsg -%></div>
+            <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- add category -->
+    <div class="modal fade text-dark" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">New Category</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="text-dark" action="/admin/addProductCategory" method="post">
+              <div class="form-group">
+                <label for="name" class="col-form-label text-dark text-dark">Category Name : </label>
+                <input type="text" name="category" class="border" id="name">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add Category</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- {{!-- Delete Product --}} -->
+    <% productData.forEach(function(productData) { %>
+      <div class="modal fade" id="deleteProduct<%= productData._id %>" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Delete confirmation</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Do you want to delete user <b class="text-dark">
+                <%= productData.name %>
+              </b>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+              <a href="/admin/deleteProduct/<%= productData._id %>" type="button" class="btn btn-danger">delete</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+
+        <!-- {{!-- Delete category --}} -->
+        <% category.forEach(function(category) { %>
+          <div class="modal fade" id="deleteCategory<%= category._id %>" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Delete confirmation</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Do you want to delete category <b class="text-dark">
+                    <%= category.category%>
+                  </b>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                  <a href="/admin/deleteProductCategory/<%= category._id %>" type="button"
+                    class="btn btn-danger">delete</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+            <!-- {{!-- listCategory --}} -->
+            <% category.forEach(function(category) { %>
+              <div class="modal fade" id="listCategory<%= category._id %>" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">List it back confirmation</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      Do you want to list category back <b class="text-dark">
+                        <%= category.category%>
+                      </b>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                      <a href="/admin/listCategory/<%= category._id %>" type="button" class="btn btn-success">List</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% }) %>
+
+                <script>
+                  $(document).ready(function () {
+                    $('#myTable').DataTable({
+                      "pageLength": 5
+                    });
+                  });
+                  setTimeout(() => {
+                    document.getElementById('msg').style.display = 'none'
+                  }, 3000)
+                </script>
+                <%- include('../layout/adminFooter') %>

@@ -1,0 +1,215 @@
+<%- include('../layout/adminHeader') %>
+  <%- include('../partials/adminNavBar')%>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+    <!-- Add this div to your HTML code -->
+    <div id="loader-wrapper">
+      <div id="loader"></div>
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+    </div>
+    <script>
+      setTimeout(() => {
+        document.getElementById('loader-wrapper').style.display = 'none'
+      }, 800);
+    </script>
+
+
+    <div class="row tm-content-row m-3">
+      <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 text-white">
+        <!-- <div class="tm-bg-primary-white text-white tm-block tm-block-products"> -->
+        <!-- <form action="/admin/searchOrder" method="post">
+            <div class="mt-1 input-group">
+              <div class="form-outline">
+                <input type="search" name="name" id="form1" class="form-control" />
+              </div>
+              <button type="submit" class="btn btn-primary">Search</button>
+              <a class="ml-5 btn btn-primary" href="/admin/order">Show All orders</a>
+            </div>
+          </form> -->
+        <!-- <div class="tm-product-table-container"> -->
+        <table id="myTable" class="display table table-hover tm-table-small tm-product-table">
+          <thead>
+            <tr>
+              <th scope="col">PRODUCT NAME</th>
+              <th scope="col">CUSTOMER</th>
+              <th scope="col">EMAIL/MOBILE</th>
+              <th scope="col">STATUS</th>
+              <th scope="col">PRICE</th>
+              <th scope="col">IMAGE</th>
+              <th scope="col">EDIT STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (orders) { %>
+              <% orders.forEach(function(order) { %>
+                <tr>
+                  <td style="background-color: #415a70;">
+                    <% for (var i=0; i < order.item.length; i++) { %>
+                      <%= i+1 %>- <%= order.item[i].product.name %> <br>
+                          <% } %>
+                  </td>
+                  <td style="background-color: #415a70;">
+                    <%= order.userName %>
+                  </td>
+                  <td style="background-color: #415a70;">
+                    <%= order.shippingAddress.mobile %>
+                  </td>
+                  <td style="background-color: #415a70;">
+                    <% if(order.status=='Pending' ){ %>
+                      <div class="tm-status-circle pending"></div>
+                      <%= order.status %>
+                        <% }else if(order.status=='Returned' ) { %>
+                          <div class="tm-status-circle cancelled"></div>
+                          <%= order.status %>
+                            <a data-toggle="modal" data-target="#refund<%= order._id %>" class="btn btn-danger"
+                              style="color: white">Refund</a>
+                            <% }else if(order.status=='Cancelled' ) { %>
+                              <div class="tm-status-circle cancelled"></div>
+                              <%= order.status %>
+                                <% }else if(order.status=='Shipped' ) { %>
+                                  <div class="tm-status-circle moving"></div>
+                                  <%= order.status %>
+                                    <% }else if(order.status=='Delivered' ) { %>
+                                      <div class="tm-status-circle moving"></div>
+                                      <%= order.status %>
+                                        <% }else if(order.status=='Refunded' ) { %>
+                                          <div class="tm-status-circle moving"></div>
+                                          <%= order.status %>
+                                            <% }else if(order.status=='Placed' ) { %>
+                                              <div class="tm-status-circle pending"></div>
+                                              <%= order.status %>
+                                                <% } %>
+                  </td>
+                  <td style="background-color: #415a70;">
+                    <%= order.total %>
+                  </td>
+                  <td style="background-color: #415a70;">
+                    <% for (var i=0; i < order.item.length; i++) { %>
+                      <% if (i % 2==0 && i> 0) { %>
+                        <br>
+                        <% } %>
+                          <%= i+1 %>- <img src="<%= order.item[i].product.images[0] %>" style="width: 50px;">
+                            <% } %>
+                  </td>
+                  <td style="background-color: #415a70;">
+                    <a data-toggle="modal" data-target="#editStatus<%= order._id %>" class="tm-product-delete-link">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="ml-3 btn btn-dark" href="/admin/orderDetails/<%= order._id %>">Details</a>
+                  </td>
+                </tr>
+                <% }); %>
+                  <% } else { %>
+                    <tr>
+                      <td class="h1 text-center p-5" colspan="8">Nothing found</td>
+                    </tr>
+                    <% } %>
+          </tbody>
+        </table>
+        <!-- </div> -->
+        <!-- </div> -->
+      </div>
+    </div>
+
+
+    <!-- {{!-- edit order --}} -->
+    <% if (orders) { %>
+      <% orders.forEach(function(order) { %>
+        <div class="modal fade" id="editStatus<%= order._id %>" tabindex="-1" role="dialog"
+          aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Status</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form class="text-dark" action="/admin/changeOrderStatus/<%= order._id %>" method="post">
+                  <div class="form-group">
+                    <label for="name" class="col-form-label text-dark">Status : </label>
+                    <select class="custom-select tm-select-accounts" id="name" name="status">
+                      <option value="Pending" <%=order.status==='Pending' ? 'selected' : '' %>>Pending</option>
+                      <option value="Shipped" <%=order.status==='Shipped' ? 'selected' : '' %>>Shipped</option>
+                      <option value="Delivered" <%=order.status==='Delivered' ? 'selected' : '' %>>Delivered</option>
+                      <option value="Cancelled" <%=order.status==='Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                    </select>
+                    <input hidden name="userId" value="<%= order.userId %>">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                    <a><button type="submit" class="btn btn-primary">confirm</button></a>
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <% }) %>
+          <% } %>
+
+
+            <!-- {{!-- modals for refund-order confirmation --}}-->
+            <% if (orders ) { %>
+              <% orders.forEach(function (order) { %>
+                <div class="modal fade" id="refund<%= order._id %>" tabindex="-1" role="dialog"
+                  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Refund Amount Confirmation</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        Do you want to Refund this order amount of <%= order.total %> ? <br> <br>
+                          Reason of Return is "<%= order.reason %>"
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+                              <button class="small btn btn-success ml-2"
+                                onclick="RefundAmt('<%= order._id %>','<%= order.userId%>','<%= order.total%>','<%= order.reason %>')">refund</button>
+                            </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <% }) %>
+                  <% } %>
+
+                    <script>
+
+                      $(document).ready(function () {
+                        $('#myTable').DataTable({
+                          "pageLength": 5
+                        });
+                      });
+                      setTimeout(() => {
+                        document.getElementById('msg').style.display = 'none'
+                      }, 3000)
+
+
+                      function RefundAmt(orderId, userId, amt, reason) {
+                        $.ajax({
+                          url: '/admin/refund',
+                          data: {
+                            orderId: orderId,
+                            userId: userId,
+                            amount: amt,
+                            reason: reason,
+                            status: 'Refunded'
+                          },
+                          method: 'post',
+                          success: (response) => {
+                            location.reload()
+                          }
+                        })
+                      }
+                    </script>
+                    <%- include('../layout/adminFooter') %>

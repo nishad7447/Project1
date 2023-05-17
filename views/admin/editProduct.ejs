@@ -1,0 +1,131 @@
+<%- include('../layout/adminHeader')%>
+  <%- include('../partials/adminNavBar')%>
+
+      <!-- Add this div to your HTML code -->
+      <div id="loader-wrapper">
+        <div id="loader"></div>
+        <div class="loader-section section-left"></div>
+        <div class="loader-section section-right"></div>
+      </div>
+      <script>
+        setTimeout(() => {
+      document.getElementById('loader-wrapper').style.display='none'
+    }, 800);
+  </script>
+  
+
+    <div class="container tm-mt-big tm-mb-big">
+      <div class="row">
+        <div class="col-xl-9 col-lg-10 col-md-12 col-sm-12 mx-auto">
+          <div class="tm-bg-primary-dark tm-block tm-block-h-auto">
+            <div class="row">
+              <div class="col-12">
+                <h2 class="tm-block-title d-inline-block">Edit Product</h2>
+              </div>
+            </div>
+            <div class="row tm-edit-product-row">
+              <div class="col-xl-6 col-lg-6 col-md-12">
+            <% if(productData) { %>
+                <% productData.forEach(function(productData) { %>
+                  <form action="/admin/editProduct/<%= productData._id %>" method="post" enctype="multipart/form-data"
+                    class="tm-edit-product-form">
+                    <div class="form-group mb-3">
+                      <label for="name">Product Name
+                      </label>
+                        <input id="name" name="name" type="text" class="form-control validate" value='<%= productData.name %>' required minlength="5"/>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label for="description">Description</label>
+                        <textarea class="form-control validate tm-small" rows="5" name="description" required minlength="5"><%= productData.description %></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label for="category">Category</label>
+                      <select class="custom-select tm-select-accounts" id="category" name="category">
+                        <% category.forEach(function(category) { %>
+                          <option value="<%= category.category %>" <% if (category.category===productData.category ) {
+                            %>
+                            selected
+                            <% } %>
+                              >
+                              <%= category.category %>
+                          </option>
+                          <% }) %>
+                      </select>
+                    </div>
+                    <div class="row">
+                      <div class="form-group mb-3 col-xs-12 col-sm-6">
+                        <label for="expire_date">Stock
+                        </label>
+                        <input id="stock" name="stock" type="text" class="form-control validate" value="<%= productData.stock%>" required pattern="[0-9]+" />
+                      </div>
+                      <div class="form-group mb-3 col-xs-12 col-sm-6">
+                        <label for="stock">Price
+                        </label>
+                        <input id="expire_date" name="price" id="price" value="<%= productData.price %>" type="text" class="form-control validate" data-large-mode="true" required pattern="[0-9]+" />
+                          </div>
+                    </div>
+
+              </div>
+              <div class="col-xl-6 col-lg-6 col-md-12 mx-auto mb-4">
+                <div class="tm-product-img-edit mx-auto">
+                  <i class="fas fa-cloud-upload-alt tm-upload-icon"></i>
+                </div>
+                    <div class="custom-file mt-3 mb-3">
+                      <input id="fileInput" multiple type="file" style="display:none;" name="image" />
+                      <input type="button" class="btn btn-primary d-block mx-auto" value="Upload new Image ..."
+                        onclick="document.getElementById('fileInput').click();" required />
+                    </div>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-block text-uppercase">Update Now</button>
+              </div>
+            </form>
+            </div>
+          </div>
+        </div>  
+        <div class="col-xl-2">
+          <% if(productData.images) { %>
+          <% productData.images.forEach(function(image, index) { %>
+            <form class="text-dark" id="delete-image-form">
+              <div class="tm-product-image m-3" style="display: flex; justify-content: space-between;">
+                <img src="<%= image %>" style="width: 50px;">
+                <input hidden name="imgUrl" value="<%= image %>">
+                <input hidden name="imgIndex" value="<%= index %>">
+                <button type="button"
+                  onclick="deleteImage(event, '<%= productData._id %>', '<%= image %>', '<%= index %>')"
+                  class="btn btn-danger btn-sm">Delete</button>
+              </div>
+            </form>
+            <% }) %>  
+        <% } %>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+    <% } %>
+    <script>
+      function deleteImage(event, productId, imgUrl, imgIndex) {
+        event.preventDefault();
+        var formData = {
+          'productId': productId,
+           'imgUrl': imgUrl,
+            'imgIndex': imgIndex
+        }
+        $.ajax({
+          url: '/admin/deleteSelectedImg',
+          type: 'POST',
+          data: formData,
+          success: function (response) {
+            // handle success response
+            window.location.reload();
+            console.log(response);
+          },
+          error: function (xhr, status, error) {
+            // handle error response
+            console.log(error);
+          }
+        });
+      }
+    </script>
+
+    <%- include('../layout/adminFooter')%>

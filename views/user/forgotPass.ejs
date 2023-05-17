@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignIn</title>
+    <link rel="stylesheet" href="/assets/css/login.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="text-center mt-4 name">
+           Forgot-Password
+        </div>
+        <form action="/forgotPassword" method="post" class="p-3 mt-3">
+            <div class="form-field d-flex align-items-center">
+                <span class="far fa-user"></span>
+                <input type="email" name="email" id="username" placeholder="Username">
+            </div>             
+            <div class="form-field d-flex align-items-center">
+                <span class="fas fa-key"></span>
+                <input type="password" name="password" id="pwd" placeholder="Password">
+            </div>
+            <div class="form-field d-flex align-items-center">
+                <span class="fas fa-key"></span>
+                <input type="password" name="rePassword" id="pwd" placeholder="Re-Password">
+            </div>
+            <% if(locals.errMsg) { %>
+            <div id="msg" class="alert alert-danger ml-4 "><%- locals.errMsg -%></div>
+            <% } %> 
+            <button type="submit" class="btn mt-3 " style="margin-bottom: 0.5em;">Submit</button>
+         </form>
+        <div class="text-center fs-5">
+           to create a account <a href="/signup">Sign up</a>
+        </div>
+    </div>
+    <script>
+        setTimeout(()=>{
+            document.getElementById('msg').style.display='none'
+        },3000)
+    </script>
+</body>
+</html>

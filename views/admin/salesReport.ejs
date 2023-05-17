@@ -1,0 +1,125 @@
+<%- include('../layout/adminHeader') %> <%- include('../partials/adminNavBar')%>
+
+    <style>
+      .btn {
+        margin-bottom: 0;
+      }
+    </style>
+    <!-- Add this div to your HTML code -->
+    <div id="loader-wrapper">
+      <div id="loader"></div>
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+    </div>
+    <script>
+      setTimeout(() => {
+        document.getElementById('loader-wrapper').style.display = 'none'
+      }, 800);
+    </script>
+
+    <section class="container mt-3 text-white py-3" style="overflow-x: hidden">
+      <div class="d-flex mt-3">
+        <h1 class="fw-bold">Sales Report</h1>
+        <form action="/admin/salesReportFilter" class="mt-4 mr-5 ml-auto" method="post">
+          <div class="d-block" style="font-weight: bold; color: rgb(255, 255, 255)">
+            <label for="filter" style="font-size: medium">Filter Report : &nbsp;</label>
+          </div>
+          <div class="d-flex">
+            <div>
+              <label>FROM : </label>
+              <input type="date" name="date" id="date" />
+              <label class="ml-4">TO : </label>
+              <input type="date" name="date" id="date" />
+              <span class="pl-4 m-0">
+                <input type="submit" value="submit" class="btn-sm btn text-light"
+                  style="background-color: rgb(56, 52, 70)" />
+              </span>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <h5 class="pt-5" style="font-weight: bold">
+        Total Earnings: Rs.<%= totalEarnings%>
+      </h5>
+
+      <div class="text-center pt-2">
+        <div class="row table-responsive col-lg-12">
+          <table class="table table-bordered" style="width: 100%" id="myTable">
+            <thead class="text-white">
+              <tr>
+                <th style="font-weight: bold" scope="col">Date</th>
+                <th style="font-weight: bold" scope="col">Order Id</th>
+                <th style="font-weight: bold" scope="col">User Name</th>
+                <th style="font-weight: bold" scope="col">Item</th>
+                <th style="font-weight: bold" scope="col">Price</th>
+                <th style="font-weight: bold" scope="col">Payment Method</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% deliveredOrders.forEach(function(order) { %>
+                <tr>
+                  <td class="text-white" style="background-color: #415a70;">
+                    <%= order.date %>
+                  </td>
+                  <td class="text-white" style="background-color: #415a70;">
+                    <%= order._id %>
+                  </td>
+                  <td class="text-white" style="background-color: #415a70;">
+                    <%= order.userName %>
+                  </td>
+                  <td class="text-white" style="background-color: #415a70;">
+                    <%= order.productCount %>
+                  </td>
+                  <td class="text-white" style="background-color: #415a70;">
+                    <%= order.total %>
+                  </td>
+                  <td class="text-white" style="background-color: #415a70;">
+                    <%= order.paymentMethod %>
+                  </td>
+                </tr>
+                <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <script>
+        $(document).ready(function () {
+          $('#myTable').DataTable({
+            dom: 'Bfrtip', // Add export buttons to table wrapper
+            buttons: [
+              'copy', 'csv',
+              {
+                extend: 'excelHtml5',
+                text: 'Export to Excel',
+                filename: 'table-data',
+                exportOptions: {
+                  columns: ':visible'
+                },
+                title: null,
+                messageTop: null,
+                messageBottom: null,
+                className: 'btn btn-primary'
+              },
+              {
+                extend: 'pdfHtml5',
+                text: 'Export to PDF',
+                filename: 'table-data',
+                exportOptions: {
+                  columns: ':visible'
+                },
+                title: null,
+                messageTop: null,
+                messageBottom: null,
+                className: 'btn btn-primary'
+              },
+              'print' // Add desired export buttons
+            ]
+          });
+        });
+      </script>
+
+
+      <%- include('../layout/adminFooter') %>
+    </section>

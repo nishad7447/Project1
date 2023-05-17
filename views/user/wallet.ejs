@@ -1,0 +1,92 @@
+<%- include('../layout/userHeader')%>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+
+.walletbody{
+	/* background-color: #ffffff; */
+	font-family: 'Noto Sans', sans-serif;
+}
+.cardWallet{
+	border: none;
+	border-radius: 10px;
+	/* width: 275px; */
+	/* margin-top: 20%; */
+}
+.fa-ellipsis-v{
+	font-size: 10px;
+	color: #C2C2C4;
+	margin-top: 6px;
+	cursor: pointer;
+}
+.text-dark{
+	font-weight: bold;
+	margin-top: 8px;
+	font-size: 13px;
+	letter-spacing: 0.5px;
+}
+.card-bottom{
+	background: #3E454D;
+	border-radius: 6px;
+}
+/* .flex-column{
+	color: #adb5bd;
+	font-size: 13px;
+}
+.flex-column p{
+	letter-spacing: 1px;
+	font-size: 18px;
+} */
+.btn-secondary{
+	height: 40px!important;
+	margin-top: 3px;
+}
+.btn-secondary:focus{
+	box-shadow: none;
+}
+</style>
+
+<div class="hero-wrap hero-bread" style="background-image: url('/assets/images/bg_6.jpg');">
+  <div class="container">
+      <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+              <p class="breadcrumbs"><span class="mr-2"><a href="/">Home</a></span> <span><a
+                          href="/profile">&nbsp;Profile </a></span></p>
+              <h1 class="mb-0 bread">User Wallet</h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="container walletbody d-flex py-5 justify-content-center mb-5">
+    <div class="cardWallet p-3">
+      <div class="d-flex flex-row justify-content-between text-align-center">
+        <i class="fas fa-ellipsis-v"></i>
+      </div>
+      <p class="text-dark"> <%= userName %>'s Wallet Account</p>
+      <div class="card-bottom pt-3 px-3 mb-2">
+        <div class="d-flex flex-row justify-content-between text-align-center">
+          <div class="d-flex flex-column py-3">
+              <span style="font-weight: bolder;">Balance amount</span>
+              <% if(wallet) { %>
+              <p>&#8377; <span class="text-white">&nbsp;<%= wallet.bal %> </span></p>
+              <br>
+              <p style="font-weight: bolder;">recent transaction Details</p>
+                  <span style="color: rgb(225, 225, 225);">Transaction Id : <%= wallet.data[0].orderId %></span>
+                  <span style="color: rgb(225, 225, 225);">Date : <%= wallet.data[0].date %></span>
+                  <span style="color: rgb(225, 225, 225);">Transaction source : <%= wallet.data[0].source %></span>
+                  <span style="color: rgb(225, 225, 225);">Transaction Amount :<%= wallet.data[0].transAmt %></span>
+              <div class="ml-auto pt-3">
+                <a href="/walletTable" style="text-decoration: underline;">more transaction details</a>
+              </div>
+              <% }else{ %>
+                <p>&#8377; <span class="text-white">&nbsp; 0 </span></p>
+                <br>
+                <p style="font-weight: bolder;">No recent transaction </p>
+                <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<%- include('../layout/userFooter')%>

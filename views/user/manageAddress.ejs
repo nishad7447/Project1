@@ -1,0 +1,224 @@
+<%- include('../layout/userHeader')%>
+
+
+
+    <link href="/assets3/style.css" rel="stylesheet">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+
+    <div class="hero-wrap hero-bread" style="background-image: url('/assets/images/bg_6.jpg');">
+      <div class="container">
+          <div class="row no-gutters slider-text align-items-center justify-content-center">
+              <div class="col-md-9 ftco-animate text-center">
+                  <p class="breadcrumbs"><span class="mr-2"><a href="/">Home</a></span> <span><a
+                              href="/profile">&nbsp;Profile </a></span></p>
+                  <h1 class="mb-0 bread">Manage User Address</h1>
+              </div>
+          </div>
+      </div>
+  </div>
+
+<div class="container emp-profile pb-2 shadow p-5 mb-5 bg-white rounded">
+    <div class="d-flex justify-content-between">
+        <h4 style="font-size: larger;font-weight: bolder;">Manage Address</h4>
+        <a href="/profile"><span class="ml-auto btn btn-primary"> Back to profile </span></a>
+    </div>
+    
+    <div class="row py-3">
+        <div class="col-md-12">
+            <% if(userDetails && userDetails.address) { %>
+            <% userDetails.address.forEach(function(addresses) { %>
+              <div class="d-flex mb-3">
+                  <input type="radio" id="<%= userDetails._id%>" class="activeAddress mr-3" name="address" data-address="<%= userDetails._id%>">
+                  <div class="border p-2" style="color: rgb(80, 80, 80);">
+                    
+                      <b><%= addresses.name%></b>, <br> 
+                      <%= addresses.address%>, <br>
+                      <%= addresses.city%>, <%= addresses.state%>, <br> 
+                      Zipcode: <%= addresses.zipcode%>, Mobile: <%= addresses.mobile%>
+                  </div>
+                  <div class="ml-auto pr-3 d-flex">
+                    <div>
+                      <button class="border-warning pl-3 pr-3 text-primary" style="letter-spacing: 0.1rem;cursor: pointer;" data-toggle="modal" data-target="#edit<%= addresses.id%>">Edit</button>
+                    </div>
+                    <div class="ml-3 mt-1" style="cursor: pointer;">
+                      <a data-toggle="modal" data-target="#deleteAddr<%= addresses.id%>">
+                        <div class="border border-warning text-center" style="width: fit-content;">
+                        <span class="ion-ios-close p-3"></span>
+                      </a>
+                    </div>
+                    </div>
+                  </div>
+              </div>
+              <% }) %>
+              <% }else{ %>
+                No address found
+              <% } %>
+
+        </div>
+    </div>
+    <div class="row py-3 pt-5 pl-2">
+        <a class="text-primary" data-toggle="modal" data-target=".bd-example-modal-lg" style="font-weight: bold;cursor: pointer;">Add a new Address</a>
+    </div>
+</div>
+
+
+<!-- add-new-address MODAL  -->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="p-4">
+          <form action="/addAddressPost" method="post">
+
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputEmail4">Name</label>
+                <input type="name" class="form-control" name="name" id="inputEmail4" placeholder="Name">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputPassword4">Mobile Number</label>
+                <input type="text" maxlength="10" class="form-control" name="mobile" id="inputPassword4" placeholder="Mobile Number">
+              </div>
+            </div>
+            <label for="">Address</label>
+            <div class="form-group">
+                <textarea name="address" class="form-control" id="address" cols="50" placeholder="Address (Area and Street)" rows="5"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputCity">City</label>
+                <input type="text" name="city" class="form-control" placeholder="city" id="inputCity">
+              </div>
+              <div class="form-group col-md-4">
+                <label for="inputState">State</label>
+                <input type="text" class="form-control" placeholder="State" name="state">
+                <!-- <select id="inputState" class="form-control">
+                  <option selected>Choose...</option>
+                  <option>...</option>
+                </select> -->
+              </div>
+              <div class="form-group col-md-2">
+                <label for="inputZip">Zip Code</label>
+                <input type="text" class="form-control" name="zipcode" placeholder="Zip Code" id="inputZip">
+              </div>
+            </div>
+            <label for="type">Address Type</label>
+            <div class="form-row text-dark">
+                <input type="radio" class="mr-1" name="type" value="home">Home &nbsp;&nbsp;&nbsp;
+                <input type="radio" class="mr-1" name="type" value="work">Work
+            </div>
+            <!-- <div class="form-group">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="gridCheck">
+                <label class="form-check-label" for="gridCheck">
+                  Check me out
+                </label>
+              </div>
+            </div> -->
+            <div class="text-center mt-2">
+                <button type="submit" id="refresh-btn" class="btn btn-primary">SUBMIT</button>
+            </div>
+            
+          </form>
+        </div>
+    </div>
+  </div>
+</div>
+
+<% if(userDetails && userDetails.address) { %>
+
+<!-- <!-- {{!-- modal deleteAddress --}} -->
+<% userDetails.address.forEach(function(addresses) { %>
+  <div class="modal fade" id="deleteAddr<%= addresses.id%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Do you want to delete this address of <%= addresses.name%>?
+        </div>
+        <div class="modal-footer">
+          <a href=""><button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button></a>
+          <a href="/deleteAddress/<%= addresses.id%>"><button type="button" class="btn btn-primary">confirm</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+<% }) %>
+
+
+<!--  Edit Address  -->
+<% userDetails.address.forEach(function(addresses) { %>
+  <div class="modal fade" id="edit<%= addresses.id%>" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+          <div class="p-4">
+            <form action="/editAddressPost/<%= addresses.id%>" method="post">
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputEmail4">Name</label>
+                  <input type="name" class="form-control" name="name" id="inputEmail4" value="<%= addresses.name%>" placeholder="Name">
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="inputPassword4">Mobile Number</label>
+                  <input type="text" maxlength="10" class="form-control" name="mobile" value="<%= addresses.mobile%>" id="inputPassword4" placeholder="Mobile Number">
+                </div>
+              </div>
+              <label for="">Address</label>
+              <div class="form-group">
+                  <input name="address" class="form-control" value="<%= addresses.address%>" id="address" cols="50" placeholder="Address (Area and Street)" rows="5">
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputCity">City</label>
+                  <input type="text" name="city" class="form-control" value="<%= addresses.city%>" placeholder="city" id="inputCity">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="inputState">State</label>
+                  <input type="text" class="form-control" value="<%= addresses.state%>" placeholder="State" name="state">
+                  <!-- <select id="inputState" class="form-control">
+                    <option selected>Choose...</option>
+                    <option>...</option>
+                  </select> -->
+                </div>
+                <div class="form-group col-md-2">
+                  <label for="inputZip">Zip Code</label>
+                  <input type="text" class="form-control" value="<%= addresses.zipcode%>" name="zipcode" placeholder="Zip Code" id="inputZip">
+                </div>
+              </div>
+              <label for="type">Address Type</label>
+              <div class="form-row text-dark">
+                  <input type="radio" class="mr-1" name="type" value="home">Home &nbsp;&nbsp;&nbsp;
+                  <input type="radio" class="mr-1" name="type" value="work">Work
+              </div>
+              <!-- <div class="form-group">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="gridCheck">
+                  <label class="form-check-label" for="gridCheck">
+                    Check me out
+                  </label>
+                </div>
+              </div> -->
+              <div class="text-center mt-2">
+                  <button type="submit" class="btn btn-primary">SUBMIT</button>
+              </div>
+
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+  <% } %>
+ 
+
+
+
+<%- include('../layout/userFooter')%>

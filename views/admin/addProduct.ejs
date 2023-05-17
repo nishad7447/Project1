@@ -1,0 +1,120 @@
+<%- include('../layout/adminHeader')%>
+  <%- include('../partials/adminNavBar')%>
+
+      <!-- Add this div to your HTML code -->
+      <div id="loader-wrapper">
+        <div id="loader"></div>
+        <div class="loader-section section-left"></div>
+        <div class="loader-section section-right"></div>
+      </div>
+      <script>
+        setTimeout(() => {
+      document.getElementById('loader-wrapper').style.display='none'
+    }, 800);
+  </script>
+  
+    <div class="container tm-mt-big tm-mb-big">
+      <div class="row">
+        <div class="col-xl-9 col-lg-10 col-md-12 col-sm-12 mx-auto">
+          <div class="tm-bg-primary-dark tm-block tm-block-h-auto">
+            <div class="row">
+              <div class="col-12">
+                <h2 class="tm-block-title d-inline-block">Add Product</h2>
+              </div>
+            </div>
+            <div class="row tm-edit-product-row">
+              <div class="col-xl-6 col-lg-6 col-md-12">
+                <form action="/admin/addProduct" method="post" class="tm-edit-product-form"
+                enctype="multipart/form-data">
+                  <div class="form-group mb-3">
+                    <label for="name">Product Name
+                    </label>
+                    <input id="name" name="name" type="text" class="form-control validate" required minlength="5"/>
+   </div>
+                  <div class="form-group mb-3">
+                    <label for="description">Description</label>
+                    <textarea class="form-control validate" rows="3" name="description" required minlength="5"></textarea>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="category">Category</label>
+                    <select class="custom-select tm-select-accounts" id="category" name="category">
+                      <option selected>Select category</option>
+                      <% category.forEach(function(category) { %>
+                        <option value="<%= category.category %>">
+                          <%= category.category %>
+                        </option>
+                        <% }) %>
+
+                    </select>
+                  </div>
+                  <div class="row">
+                    <div class="form-group mb-3 col-xs-12 col-sm-6">
+                      <label for="stock">Units In Stock
+                      </label>
+                      <input id="stock" name="stock" type="text" class="form-control validate" required pattern="[0-9]+" />
+                    </div>
+                    <div class="form-group mb-3 col-xs-12 col-sm-6">
+                      <label for="expire_date">Price
+                      </label>
+                      <input id="expire_date" name="price" id="price" type="text" class="form-control validate" data-large-mode="true" required pattern="[0-9]+" />
+                    </div>
+                  </div>
+
+              </div>
+              <div class="col-xl-6 col-lg-6 col-md-12 mx-auto mb-4">
+                <div class="tm-product-img-dummy mx-auto">
+                  <i class="fas fa-cloud-upload-alt tm-upload-icon"></i>
+                </div>
+                <div class="custom-file mt-3 mb-3">
+                  <input id="fileInput" multiple type="file" style="display:none;" name="image" />
+                  <input type="button" class="btn btn-primary d-block mx-auto" value="Upload ..."
+                    onclick="document.getElementById('fileInput').click();" required />
+
+                </div>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-block text-uppercase">Add Product Now</button>
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.querySelector('.tm-edit-product-form');
+const nameInput = document.getElementById('name');
+const descriptionInput = document.getElementById('description');
+const stockInput = document.getElementById('stock');
+const priceInput = document.getElementById('price');
+
+form.addEventListener('submit', (event) => {
+  // Prevent the form from submitting by default
+  event.preventDefault();
+
+  // Validate the input fields
+  if (nameInput.value.length < 5) {
+    alert('Product name must be at least 5 characters long.');
+    return;
+  }
+  if (descriptionInput.value.length < 5) {
+    alert('Product description must be at least 5 characters long.');
+    return;
+  }
+  if (stockInput.value < 1) {
+    alert('Stock must be a positive integer.');
+    return;
+  }
+  if (priceInput.value < 1) {
+    alert('Price must be a positive integer.');
+    return;
+  }
+
+  // If all fields are valid, submit the form
+  form.submit();
+});
+
+    </script>
+
+    <%- include('../layout/adminFooter')%>

@@ -1,0 +1,107 @@
+<%- include('../layout/userHeader')%>
+
+
+
+    <link href="/assets3/style.css" rel="stylesheet">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <div class="hero-wrap hero-bread" style="background-image: url('/assets/images/bg_6.jpg');">
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-center justify-content-center">
+                <div class="col-md-9 ftco-animate text-center">
+                    <p class="breadcrumbs"><span class="mr-2"><a href="/">Home</a></span> </p>
+                    <h1 class="mb-0 bread">User Profile</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="container emp-profile shadow p-5 mb-5 bg-white rounded">
+            <form enctype="multipart/form-data" action="/profile" method="post">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="profile-img">
+                            <img src='<%= userDetails.image %>' alt="User Img" style="max-width: 280px; max-height: 180px;"/>
+                                <input id="fileInput" multiple type="file" style="display:none; " name="image" />
+                                <input type="button" class="file btn btn-lg btn-primary" value="Change Photo ..."
+                                  onclick="document.getElementById('fileInput').click();" required />              
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="profile-head">
+                                    <h5>
+                                      <%= userDetails.name%>
+                                    </h5>
+                                    <h6>
+                                       Our user
+                                    </h6>
+                                    <p class="proile-rating">RANKINGS : <span>8/10</span></p>
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="submit" class="profile-edit-btn"  value="Edit Profile"/>
+                       <a href="/deactivateAcc/<%= userDetails._id%>"> <input type="button" class="profile-edit-btn btn-danger mt-2 text-white small"  value="Deactivate Acc"/></a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="profile-work">
+                            <p><a href="/order">My Orders></a></p>
+                            <p class="small">Account Settings</p>
+                            <a href="">Profile Information</a><br>
+                            <a href="/manageAddress">Manage Address</a><br/>
+                            <a href="/wallet">Wallet</a><br>
+                            <a href="/wishlist">My Wishlist</a><br/>
+                            <a href="/cart">Cart</a><br/>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="tab-content profile-tab" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Name</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" name="name" id="fullName" value="<%= userDetails.name%>" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Email</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="email" name="email" id="email" value="<%= userDetails.email%>" required> 
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Phone</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input  name="mobile" id="phoneNumber" value="<%= userDetails.mobile%>" maxlength="10" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Change Password</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="password" name="password" id="pwd" placeholder="Password" required>
+                                            </div>
+                                        </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>           
+        </div>
+
+<%- include('../layout/userFooter')%>

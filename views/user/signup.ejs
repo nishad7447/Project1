@@ -1,0 +1,55 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignUp</title>
+    <link rel="stylesheet" href="/assets/css/login.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="text-center mt-4 nameSignup">
+           Create New Account
+        </div>
+        <form action="signup" method="post" class="p-3 mt-3">
+            <div class="form-field d-flex align-items-center">
+                <span class="far fa-user"></span>
+                <input type="text" name="name" id="fullName" placeholder="Full Name" required>
+            </div>
+            <div class="form-field d-flex align-items-center">
+                <span class="far fa-user"></span>
+                <input  name="mobile" id="phoneNumber" placeholder="Phone Number" maxlength="10" required>
+            </div>
+            <div class="form-field d-flex align-items-center">
+                <span class="far fa-user"></span>
+                <input type="text" name="email" id="userName" placeholder="Email-Id / Username" required>
+            </div>
+            <div class="form-field d-flex align-items-center">
+                <span class="fas fa-key"></span>
+                <input type="password" name="password" id="pwd" placeholder="Password" required>
+            </div>
+            <div class="form-field d-flex align-items-center">
+                <span class="fas fa-key"></span>
+                <input type="password" name="rePassword" id="pwd" placeholder="Re-Password" required>
+            </div>
+            <% if(locals.errMsg) { %>
+                <div id="msg" class="alert alert-danger ml-4 "><%- locals.errMsg -%></div>
+              <% } %>  
+            <button type="submit" class="btn mt-3">SignUp</button>
+
+
+        </form>
+        <div class="text-center fs-5">
+           If already a user <a href="/login">Sign In</a>
+        </div>
+    </div>
+
+    
+ 
+    <script>
+        setTimeout(()=>{
+            document.getElementById('msg').style.display='none'
+        },3000)
+    </script>
+</body>
+</html>

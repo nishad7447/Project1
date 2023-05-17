@@ -1,0 +1,77 @@
+<%- include('../layout/adminHeader') %>
+<%- include('../partials/adminNavBar') %>
+
+    <!-- Add this div to your HTML code -->
+    <div id="loader-wrapper">
+      <div id="loader"></div>
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+    </div>
+    <script>
+      setTimeout(() => {
+    document.getElementById('loader-wrapper').style.display='none'
+  }, 800);
+</script>
+
+
+<div class="container  mt-3">
+    <div class="row tm-bg-primary text-white">
+        <div class="col-lg-6 mt-3">
+            <h2 class="fw-bold">ADD COUPON</h2>
+            <form action="/admin/addCoupon" style="margin-top: 2em;" method="post" id="form">
+                <div class="mb-3">
+                  <label for="code" class="form-label">Code</label>
+                  <input type="text" class="form-control text-dark" name="code" aria-describedby="emailHelp" required style="background-color: white;">
+                </div>
+                <div class="mb-3">
+                  <label for="discount" class="form-label">Discount</label>
+                  <input type="text" class="form-control text-dark" name="discount" required style="background-color: white;">
+                </div>
+                <div class="mb-3">
+                  <label for="desc" class="form-label">Description</label>
+                  <input type="text" class="form-control text-dark" name="desc" required style="background-color: white;">
+                </div>
+                <div class="mb-3">
+                  <label for="date" class="form-label">Expiry Date</label>
+                  <input type="date" class="form-control text-dark" name="date" required style="background-color: white;">
+                </div>
+                <div class="text-center mt-4">
+                    <button onclick="validateForm()" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+  function validateForm() {
+    let form = document.getElementById("form");
+    let inputs = form.getElementsByTagName("input");
+    let isFormValid = true;
+    for(let i = 0; i < inputs.length; i++) {
+      if(inputs[i].value === "") {
+        isFormValid = false;
+        inputs[i].style.borderColor = "red";
+      }else {
+        inputs[i].style.borderColor = "";
+      }
+    }
+    if(isFormValid){
+      form.submit();
+    }else{
+      Toastify({
+	      	text: "fill all the field",
+	      	duration: 3000,
+	      	gravity: "top",
+	      	position: "center",
+	      	style: {
+	      		background: "linear-gradient(to right, #fe6d00, #ffb900)",
+	      	},
+	      }).showToast();
+        setTimeout(()=>{
+	      	location.reload();
+	      }, 650);
+    }
+  }
+</script>
+<%- include('../layout/adminFooter') %>

@@ -1,0 +1,167 @@
+<%- include('../layout/adminHeader') %>
+  <%- include('../partials/adminNavBar') %>
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+
+    <style>
+      .btn {
+        margin-bottom: 0;
+      }
+    </style>
+        <!-- Add this div to your HTML code -->
+        <div id="loader-wrapper">
+          <div id="loader"></div>
+          <div class="loader-section section-left"></div>
+          <div class="loader-section section-right"></div>
+        </div>
+        <script>
+          setTimeout(() => {
+        document.getElementById('loader-wrapper').style.display='none'
+      }, 800);
+    </script>
+    
+    <section class="container mt-3 text-white py-3" style="overflow-x: hidden;">
+      <div class="row">
+        <h4 class="mt-3 mr-4 ">Banner Management</h4>
+        <div class="mt-2 d-flex"><a class="btn btn-success" data-toggle="modal" data-target="#add">Add Banner</a></div>
+      </div>
+      <div class="text-center pt-2">
+        <div class="row table-responsive col-lg-12">
+          <table class="table table-bordered " style="width:100%" id="example">
+            <thead class=" text-white">
+              <tr>
+                <th style="font-weight: bold;" scope="col">Banner Name</th>
+                <th style="font-weight: bold;" scope="col">Banner Image</th>
+                <th style="font-weight: bold;" scope="col">Edit Option</th>
+                <th style="font-weight: bold;" scope="col">Set Active</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% banner.forEach(function(banner) { %>
+                <tr>
+                  <td>
+                    <%=banner.bannerName%>
+                  </td>
+                  <td>
+                    <a href="<%= banner.image %>" class="image-popup" style="display: flex; justify-content: center;">
+                      <img style="width: 40px;height:40px" src="<%= banner.image%>">
+                    </a>
+                  </td>
+                  <td><a class="btn btn-warning" data-toggle="modal" data-target="#edit<%= banner._id%>">Edit</a></<
+                      /td>
+                    <% if(banner.active){%>
+                  <td><a class="btn btn-success disabled" style="font-weight: bold;">selected</a></td>
+                  <%}else{%>
+                    <td><a class="btn btn-success" style="font-weight: bold;" data-toggle="modal"
+                        data-target="#select<%= banner._id%>">select</a></td>
+                    <%}%>
+                </tr>
+                <% }); %>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- {{!-- add banner modal --}} -->
+    <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Add Banner</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="p-4">
+            <form action="/admin/addBanner" method="post" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label for="name" class="form-label">Banner Name</label>
+                <input type="text" name="bannerName" required>
+              </div>
+              <div class="mb-3">
+                <label for="image" class="form-label">Image</label>
+                <input type="file" id="fileInput" name="image" required>
+                <img src="" hidden id="bannerImg" class="mt-2" style="width: 80px;height: 80px;margin-left: 2rem;"
+                  alt="">
+              </div>
+              <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- {{!-- edit coupon modal --}} -->
+    <% banner.forEach(function(banner) { %>
+      <div class="modal fade" id="edit<%= banner._id%>" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Edit Banner</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="p-4">
+              <form action="/admin/editBanner/<%= banner._id%>" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <label for="name" class="form-label">Banner Name</label>
+                  <input type="text" value="<%= banner.bannerName%>" name="bannerName" required>
+                </div>
+                <div class="mb-3">
+                  <label for="image" class="form-label">Image</label>
+                  <input type="file" id="fileInput" name="image" required>
+                  <img src="" hidden id="bannerImg" class="mt-2" style="width: 80px;height: 80px;margin-left: 2rem;"
+                    alt="">
+                </div>
+                <div class="text-center mt-4">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }); %>
+
+        <!-- {{!-- select modal --}} -->
+        <% banner.forEach(function(banner) { %>
+          <div class="modal fade" id="select<%= banner._id%>" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Do you want to select this Banner ?
+                </div>
+                <div class="modal-footer">
+                  <a href=""><button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button></a>
+                  <a href="/admin/selectBanner/<%= banner._id%>"><button type="button"
+                      class="btn btn-primary">select</button></a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% }); %>
+
+            <script>
+              $(document).ready(function () {
+                $('#example').DataTable({
+                  "pageLength": 5
+                });
+              });
+            </script>
+            <%- include('../layout/adminFooter') %>

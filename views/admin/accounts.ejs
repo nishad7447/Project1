@@ -1,0 +1,198 @@
+<%- include('../layout/adminHeader')%>
+<%- include('../partials/adminNavBar')%>
+
+    <!-- Add this div to your HTML code -->
+    <div id="loader-wrapper">
+      <div id="loader"></div>
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+    </div>
+    <script>
+      setTimeout(() => {
+    document.getElementById('loader-wrapper').style.display='none'
+  }, 800);
+</script>
+
+
+<div class="col-sm-12 col-md-12 col-lg-12  col-xl-12 tm-block-col">
+    <div class="tm-bg-primary-dark tm-block tm-block-products">
+        <form action="/admin/searchUser" method="post">
+          <div class="mt-1 input-group">
+            <div class="form-outline">
+              <input type="search" name="name" id="form1" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a class="ml-5 btn btn-primary" href="/admin/accounts">Show All users</a>
+          </div>
+          </form>
+      <div class="tm-product-table-container">
+        <% if(locals.errMsg) { %>
+            <div id="msg" class="alert alert-danger ml-4 "><%- locals.errMsg -%></div>
+          <% } %> 
+          <table class="table table-hover tm-table-small tm-product-table">
+              <thead>
+                  <tr>
+                      <th scope="col">NAME</th>
+                      <th scope="col">Mobile</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (userData.length!=0) { %>
+                    <% userData.forEach(function(userData) { %>
+                        <tr>
+                            <td class="tm-product-name"><%= userData.name %></td>
+                            <td><%= userData.mobile %></td>
+                            <td><%= userData.email %></td>
+                            <!-- <td><%= userData.status %></td> -->
+                            <td> <% if (userData.status==true) { %>
+                              <a href="/admin/Block/<%= userData._id %>"><button class="btn btn-success">Unblocked</button></a>
+                              <% } else { %>
+                                <a href="/admin/Block/<%= userData._id %>"><button class="btn btn-danger">Blocked</button></a>
+                              <% } %></td>
+                            </td>
+                            <td>
+                                <a href="#" data-toggle="modal" data-target="#edit<%= userData._id %>" class="tm-product-delete-link">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" data-toggle="modal" data-target="#delete<%= userData._id %>" class="tm-product-delete-link">
+                                    <i class="far fa-trash-alt tm-product-delete-icon"></i>
+                                </a>
+                              
+                            </td>
+                        </tr>
+                        <% }) %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="12" class="text-center h1">No user found</td>
+                          </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+                
+            </div>
+            <!-- table container -->
+            <a data-toggle="modal" data-target="#add" class="btn btn-primary btn-block text-uppercase mb-3">Add new user</a>
+     </div>
+  </div>
+
+    <!-- {{!-- modal-adduser --}} -->
+    <div class="modal fade text-dark" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add User</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="text-dark" action="/admin/addUser" method="post">
+            <div class="form-group">
+              <label for="name" class="col-form-label text-dark text-dark">Name : </label>
+              <input type="text" name="name" class="border" id="name">
+            </div>
+            <div class="form-group">
+              <label for="mobile" class="col-form-label text-dark text-dark">Mobile Number : </label>
+              <input type="tel" maxlength="10" name="mobile" class="border" id="mobile">
+            </div>
+            <div class="form-group">
+              <label for="email" class="col-form-label text-dark text-dark">Email : </label>
+              <input type="text" name="email" class="border" id="email">
+            </div>
+            <div class="form-group">
+              <label for="password" class="col-form-label text-dark text-dark">Password : </label>
+              <input type="text" name="password" class="border" id="password">
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-form-label text-dark text-dark">Re-Password : </label>
+                <input type="text" name="rePassword" class="border" id="password">
+              </div>
+              
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add User</button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- {{!-- edit User --}} -->
+  <% userData.forEach(function(userData) { %>
+  <div class="modal fade" id="edit<%= userData._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit User</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="text-dark" action="/admin/editUser/<%= userData._id %>" method="post">
+            <div class="form-group">
+              <label for="name" class="col-form-label text-dark">Name : </label>
+              <input type="text" name="name" value="<%= userData.name%>" style="color: black;" class="border" id="name">
+            </div>
+            <div class="form-group">
+              <label for="mobile" class="col-form-label text-dark">Mobile Number : </label>
+              <input type="tel" maxlength="10" value="<%= userData.mobile%>" name="mobile" class="border" id="mobile">
+            </div>
+            <div class="form-group">
+              <label for="email" class="col-form-label text-dark">Email : </label>
+              <input type="text" name="email" value="<%= userData.email%>" class="border" id="email">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+              <a><button type="submit" class="btn btn-primary">confirm</button></a>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <% }) %>
+
+
+  <!-- {{!-- Delete User --}} -->
+  <% userData.forEach(function(userData) { %>
+  <div class="modal fade" id="delete<%= userData._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Delete confirmation</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Do you want to delete user <b class="text-dark"><%= userData.name %></b>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+          <a href="/admin/deleteUser/<%= userData._id %>"  type="button" class="btn btn-danger">delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+
+  <script>
+    setTimeout(()=>{
+        document.getElementById('msg').style.display='none'
+    },3000)
+    
+
+    
+</script>
+
+<%- include('../layout/adminFooter')%>

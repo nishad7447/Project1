@@ -1,0 +1,163 @@
+<%- include('../layout/adminHeader')  %>
+<%- include('../partials/adminNavBar') %>
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+
+<style>
+    .btn{
+        margin-bottom: 0;
+    }
+</style>
+    <!-- Add this div to your HTML code -->
+    <div id="loader-wrapper">
+      <div id="loader"></div>
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+    </div>
+    <script>
+      setTimeout(() => {
+    document.getElementById('loader-wrapper').style.display='none'
+  }, 800);
+</script>
+
+<section class="container mt-3 text-white py-3" style="overflow-x: hidden;">
+    <div class="row">
+        <h4 class="mt-3 mr-4 ">Coupons</h4>
+        <div class="mt-2 d-flex"><a href="/admin/addCoupon" class="btn btn-success ms-auto ">Create Coupons</a></div>
+    </div>
+    <div class="text-center pt-2">
+      <div class="row table-responsive col-lg-12">
+        <table class="table table-bordered " style="width:100%" id="example">
+          <thead class=" text-white">
+            <tr>
+              <th style="font-weight: bold;" scope="col">Sl No.</th>
+              <th style="font-weight: bold;" scope="col">Code</th>
+              <th style="font-weight: bold;" scope="col">Discount</th>
+              <th style="font-weight: bold;" scope="col">Expiry Date</th>
+              <th style="font-weight: bold;" scope="col">Edit</th>
+              <th style="font-weight: bold;" scope="col">Deactivate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% coupons.forEach(function(coupon, index) { %>
+                <tr>
+                  <td><%= index + 1 %>.</td>
+                  <td><%= coupon.code %></td>
+                  <td>&#8377 <%= coupon.discount %></td>
+                  <% if (coupon.expired) { %>
+                    <td class="text-danger" style="font-weight: bold;">expired</td>
+                  <% } else if (coupon.deactivated) { %>
+                    <td class="text-danger" style="font-weight: bold;">deactivated</td>
+                  <% } else { %>
+                    <td class="text-success" style="font-weight: bold;"><%= coupon.date %></td>
+                  <% } %>
+                  <td><a class="btn btn-primary" data-toggle="modal" data-target="#edit<%= coupon._id %>">Edit</a> &nbsp;</td>
+              
+                  <% if (coupon.deactivated) { %>
+                    <td><a class="btn btn-success" data-toggle="modal" data-target="#activate<%= coupon._id %>">Activate</a></td>
+                  <% } else if (coupon.expired) { %>
+                    <td><a class="btn btn-danger disabled">expired</a></td>
+                  <% } else { %>
+                    <td><a class="btn btn-danger" data-toggle="modal" data-target="#deactivate<%= coupon._id %>">Deactivate</a></td>
+                  <% } %>
+                </tr>
+              <% }); %>
+              
+          </tbody>
+        </table>
+      </div>
+    </div>
+</section>
+
+  <!-- {{!-- deactivate modal --}} -->
+  <% coupons.forEach(function(coupon) { %>
+    <div class="modal fade" id="deactivate<%= coupon._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Do you want to Deactivate <%= coupon.code %> ?
+          </div>
+          <div class="modal-footer">
+            <a href=""><button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button></a>
+            <a href="/admin/deactivate/<%= coupon._id %>"><button type="button" class="btn btn-danger">Deactivate</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+  
+  <!-- {{!-- activate Modal --}} -->
+  <% coupons.forEach(function(coupon) { %>
+    <div class="modal fade" id="activate<%= coupon._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Do you want to Activate <%= coupon.code %> ?
+          </div>
+          <div class="modal-footer">
+            <a href=""><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button></a>
+            <a href="/admin/activate/<%= coupon._id %>"><button type="button" class="btn btn-success">Activate</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  
+  <!-- {{!-- edit coupon modal --}} -->
+  <% coupons.forEach(function(coupon) { %>
+    <div class="modal fade" id="edit<%= coupon._id %>" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="p-4">
+              <form action="/admin/editCouponPost/<%= coupon._id %>" method="post">
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="inputEmail4">code</label>
+                    <input type="text" class="form-control" name="code" id="inputEmail4" value="<%= coupon.code %>" required>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="discount">Discount</label>
+                    <input type="text" class="form-control" name="discount" value="<%= coupon.discount %>" id="discount" required>
+                  </div>
+                </div>
+                <label for="">Description</label>
+                <div class="form-group">
+                    <input type="text" name="desc" class="form-control" value="<%= coupon.desc %>" required>
+                </div>
+                <label for="">Date</label>
+                <div class="form-group">
+                    <input type="date" name="date" class="form-control" value="<%= coupon.date %>" required>
+                </div>
+                <div class="text-center mt-2">
+                    <button type="submit" class="btn btn-primary">SUBMIT</button>
+                </div>
+              </form>
+            </div>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  
+  <script>
+              $(document).ready(function() {
+    $('#example').DataTable({
+      "pageLength": 5
+    });
+} );
+  </script>
+<%- include('../layout/adminFooter')  %>
