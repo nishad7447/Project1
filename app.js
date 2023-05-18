@@ -33,6 +33,6 @@ db.connect((err)=>{
   else console.log("DB connected");
 })
 
-app.listen(3001,()=>{
+app.listen(3001 || process.env.port,()=>{
     console.log('server started in http://localhost:3001 !!');
   })
