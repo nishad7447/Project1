@@ -32,44 +32,27 @@
     <div class="slider-item js-fullheight">
       <div class="overlay"></div>
       <div class="container-fluid p-0">
-        <div
-          class="row d-flex no-gutters slider-text js-fullheight align-items-center justify-content-end"
-          data-scrollax-parent="true"
-        >
-          <div
-            class="one-third order-md-last img js-fullheight"
-            style="background-image: url('http://res.cloudinary.com/dtvdec6j1/image/upload/v1683691958/ymeuje9rlijutg5n1gvg.jpg')"
-          ></div>
-          <div
-            class="one-forth d-flex js-fullheight align-items-center ftco-animate"
-            data-scrollax=" properties: { translateY: '70%' }"
-          >
+        <div class="row d-flex no-gutters slider-text js-fullheight align-items-center justify-content-end" data-scrollax-parent="true" style="overflow-y: auto; max-height: 100vh;">
+          <div class="one-third order-md-last img js-fullheight" style="background-image: url('http://res.cloudinary.com/dtvdec6j1/image/upload/v1683691958/ymeuje9rlijutg5n1gvg.jpg')"></div>
+          <div class="one-forth d-flex js-fullheight align-items-center ftco-animate" data-scrollax="properties: { translateY: '70%' }">
             <div class="text">
-              <span class="subheading">Apple Iphones</span>
+              <span class="subheading">Apple iPhones</span>
               <div class="horizontal">
-                <h3
-                  class="vr"
-                  style="background-image: url(/assets/images/divider.jpg)"
-                >
-                  Since 2007
-                </h3>
+                <h3 class="vr" style="background-image: url(/assets/images/divider.jpg)">Since 2007</h3>
                 <h1 class="mb-4 mt-3">
-                  Think Different <span>Apple</span> Iphone
+                  Think Different <span>Apple</span> iPhone
                 </h1>
                 <p>
-                  “Think Different” is one of the most recognizable slogans of
-                  the 21st Century
+                  “Think Different” is one of the most recognizable slogans of the 21st Century
                 </p>
-
                 <p>
-                  <a href="<%= locals.user ? '#' : '/login' %>" class="btn btn-primary px-5 py-3 mt-3"
-                    >Shop Now</a
-                  >
+                  <a href="<%= locals.user ? '#' : '/login' %>" class="btn btn-primary px-5 py-3 mt-3">Shop Now</a>
                 </p>
               </div>
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   </div>
