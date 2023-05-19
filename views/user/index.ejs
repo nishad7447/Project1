@@ -19,7 +19,7 @@
                   This people-first approach to innovation is a key pillar of the company's “Together for tomorrow” vision.
                 </p>
                 <p>
-                  <a href="<%= locals.user ? '#' : '/login' %>" class="btn btn-primary px-5 py-3 mt-3">Discover Now</a>
+                  <a href="<%= locals.user ? '#product' : '/login' %>" class="btn btn-primary px-5 py-3 mt-3">Discover Now</a>
                 </p>
               </div>
             </div>
@@ -47,7 +47,7 @@
                   “Think Different” is one of the most recognizable slogans of the 21st Century
                 </p>
                 <p>
-                  <a href="<%= locals.user ? '#' : '/login' %>" class="btn btn-primary px-5 py-3 mt-3">Shop Now</a>
+                  <a href="<%= locals.user ? '#apProduct' : '/login' %>" class="btn btn-primary px-5 py-3 mt-3">Shop Now</a>
                 </p>
               </div>
             </div>
@@ -63,7 +63,7 @@
   <div class="container">
     <div class="row justify-content-center mb-3 pb-3">
       <div class="col-md-12 heading-section text-center ftco-animate">
-        <h2 class="mb-4">Best Sellers</h2>
+        <h2 class="mb-4" id="product" >Best Sellers</h2>
         <p>
           Far far away, behind the word mountains, far from the countries
           Vokalia and Consonantia
@@ -205,7 +205,7 @@
   <div class="container">
     <div class="row justify-content-center mb-3 pb-3">
       <div class="col-md-12 heading-section text-center ftco-animate">
-        <h2 class="mb-4">Products</h2>
+        <h2 class="mb-4" id="apProduct"  >Products</h2>
         <p>
           Far far away, behind the word mountains, far from the countries
           Vokalia and Consonantia
