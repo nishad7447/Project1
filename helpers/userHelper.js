@@ -182,6 +182,36 @@ module.exports = {
   addOrderDetails: (order, userId) => {
     return new Promise(async (resolve, reject) => {
 
+       // Generate a unique code
+       const generateUniqueCode = async () => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let orderId = '';
+
+        // Generate a random 6-character code
+        for (let i = 0; i < 6; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          orderId += characters.charAt(randomIndex);
+        }
+
+        // Check if the generated code already exists in the order collection
+        const existingOrder = await db
+          .get()
+          .collection(collection.ORDER_COLLECTION)
+          .findOne({ orderId });
+
+        // If the code already exists, generate a new one recursively
+        if (existingOrder) {
+          return generateUniqueCode();
+        }
+
+        return orderId;
+      };
+
+        // Generate a unique code
+        const orderId = await generateUniqueCode();
+        order.orderId = orderId;
+  
+
       if (order.coupon != 'undefined') {
         const couponCode = order.coupon;
         const coupon = await db.get().collection(collection.COUPON_COLLECTION).findOne({ code: order.coupon });

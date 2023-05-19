@@ -253,11 +253,11 @@
                 </div>
                 <div class="row invoice ">
                     <div class="col">
-                        <p class="mb-1"> OrderId : <%= data._id %>
+                        <p class="mb-1"> OrderId : <%= data.orderId %>
                         </p>
                         <p class="mb-1">Order status : <%= data.status %>
                         </p>
-                        <p class="mb-1">Invoice Date : <%= data.date %>
+                        <p class="mb-1">Invoice Date : <%= data.date.toLocaleDateString('en-GB') %>
                         </p>
                     </div>
                 </div>
@@ -278,7 +278,7 @@
                     </div>
                     <div class="row mb-3 mt-3 mt-md-0">
                         <!-- {{!-- <div class="col-auto border-line"> <small class="text-white">PAN:AA02hDW7E</small></div> --}} -->
-                        <div class="col-auto border-line"> <small class="text-white">OrderID:<%= data._id %> </small>
+                        <div class="col-auto border-line"> <small class="text-white">OrderID:<%= data.orderId %> </small>
                         </div>
                         <div class="col-auto "><small class="text-white">GSTN:268FD07EXX </small> </div>
                     </div>

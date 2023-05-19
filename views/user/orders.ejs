@@ -33,7 +33,7 @@
                 <% if (data ) { %>
                   <% data.forEach(function (order) { %>
                         <tr>
-                            <td class="tm-product-name"><%= order.date %></td>
+                            <td class="tm-product-name"><%= order.date.toLocaleDateString('en-GB') %></td>
                             <td> <% order.item.forEach(function (item) { %><%= item.product.name %> <br> <% }) %></td>
                             <td><%= order.shippingAddress.address + ', ' + order.shippingAddress.zipcode %></td>
                             <td><%= order.shippingAddress.mobile %></td>
