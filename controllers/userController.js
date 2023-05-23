@@ -608,8 +608,8 @@ module.exports = {
             payment_method: "paypal",
           },
           redirect_urls: {
-            return_url: "http://localhost:3001/success",
-            cancel_url: "http://localhost:3001/failure",
+            return_url: "http://www.flagship-phones.store/success",
+            cancel_url: "http://www.flagship-phones.store/failure",
           },
           transactions: [
             {
